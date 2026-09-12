@@ -1,0 +1,239 @@
+<meta charset="utf-8">
+<style>
+#dm-wireframes { color-scheme: light dark; --dm-bg:light-dark(#ffffff,#232426); --dm-soft:light-dark(#f5f5f5,#2b2d30); --dm-chrome:light-dark(#ebebed,#323438); --dm-ink:light-dark(#24262b,#eef0f3); --dm-muted:light-dark(#636770,#afb4bd); --dm-line:light-dark(#d6d8dc,#4b4e54); --dm-accent:light-dark(#2859ad,#a4c5ff); --dm-selected:light-dark(#e4edfc,#344866); --dm-tile:light-dark(#e4e6e9,#3d4147); --dm-tile2:light-dark(#d7dbe0,#454b54); --dm-tile3:light-dark(#ccd2da,#505968); font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--dm-ink); width:100%; }
+#dm-wireframes * {box-sizing:border-box}
+#dm-wireframes button,#dm-wireframes input,#dm-wireframes select {font:inherit;color:inherit}
+#dm-wireframes button {cursor:pointer;background:var(--dm-bg);border:1px solid var(--dm-line);border-radius:5px;padding:6px 10px}
+#dm-wireframes button:hover {background:var(--dm-selected)}
+#dm-wireframes button:disabled {opacity:.45;cursor:default}
+#dm-wireframes button[aria-pressed="true"] {background:var(--dm-selected);color:var(--dm-accent);border-color:var(--dm-accent)}
+#dm-wireframes input,#dm-wireframes select {background:var(--dm-bg);border:1px solid var(--dm-line);border-radius:5px;padding:6px 8px;min-width:0}
+#dm-wireframes .dm-scenes {display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+#dm-wireframes .dm-kicker {font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dm-muted);font-weight:500}
+#dm-wireframes .dm-scenes .dm-kicker {margin-right:8px}
+#dm-wireframes .dm-window {background:var(--dm-bg);border:1px solid var(--dm-line);border-radius:11px;overflow:hidden}
+#dm-wireframes .dm-titlebar {display:flex;align-items:center;gap:14px;padding:13px 16px;background:var(--dm-chrome);border-bottom:1px solid var(--dm-line)}
+#dm-wireframes .dm-lights {display:flex;gap:7px}
+#dm-wireframes .dm-lights span {width:11px;height:11px;background:var(--dm-line);border:1px solid var(--dm-muted);border-radius:100%}
+#dm-wireframes .dm-title {font-weight:500;flex:1}
+#dm-wireframes .dm-subtitle {font-size:11px;color:var(--dm-muted);margin-left:8px;font-weight:400}
+#dm-wireframes .dm-toolbar {display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 13px;border-bottom:1px solid var(--dm-line)}
+#dm-wireframes .dm-search {flex:1;min-width:140px}
+#dm-wireframes .dm-workspace {display:grid;grid-template-columns:165px minmax(0,1fr) 215px;min-height:555px}
+#dm-wireframes .dm-sidebar {padding:17px 10px;background:var(--dm-soft);border-right:1px solid var(--dm-line);display:flex;flex-direction:column;gap:5px;min-width:0}
+#dm-wireframes .dm-sidebar .dm-kicker {padding:0 6px;margin:8px 0 5px}
+#dm-wireframes .dm-sidebar button {text-align:left;border:0;background:transparent;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px}
+#dm-wireframes .dm-sidebar button[aria-pressed="true"] {background:var(--dm-selected);color:var(--dm-accent)}
+#dm-wireframes .dm-sidebar small {font-size:11px;color:var(--dm-muted);white-space:nowrap}
+#dm-wireframes .dm-side-volume {margin-top:auto;padding:20px 6px 0;color:var(--dm-muted);font-size:11px}
+#dm-wireframes .dm-meter {height:5px;background:var(--dm-chrome);border-radius:2px;margin:8px 0;overflow:hidden}
+#dm-wireframes .dm-meter span {display:block;height:100%;background:var(--dm-muted)}
+#dm-wireframes .dm-alert .dm-meter {background:repeating-linear-gradient(120deg,var(--dm-chrome) 0 8px,var(--dm-tile3) 8px 16px)}
+#dm-wireframes .dm-alert .dm-meter span {display:none}
+#dm-wireframes .dm-main {padding:18px;min-width:0}
+#dm-wireframes .dm-breadcrumb {display:flex;flex-wrap:wrap;gap:5px;align-items:center;color:var(--dm-muted);font-size:11px;margin-bottom:12px}
+#dm-wireframes .dm-breadcrumb button {padding:2px 4px;border:0;background:transparent}
+#dm-wireframes .dm-heading {display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+#dm-wireframes h2 {font-size:20px;letter-spacing:-.03em;font-weight:500;margin:0 0 3px}
+#dm-wireframes h3 {font-size:14px;font-weight:500;margin:0 0 8px}
+#dm-wireframes p {margin:0}
+#dm-wireframes .dm-muted {color:var(--dm-muted);font-size:12px}
+#dm-wireframes .dm-tag {font-size:11px;border:1px solid var(--dm-line);padding:3px 7px;border-radius:4px;white-space:nowrap}
+#dm-wireframes .dm-map {height:282px;position:relative;background:var(--dm-soft);border:1px solid var(--dm-line);border-radius:5px;overflow:hidden}
+#dm-wireframes .dm-tile {position:absolute;padding:10px;border:2px solid var(--dm-bg);border-radius:2px;background:var(--dm-tile);text-align:left;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:3px}
+#dm-wireframes .dm-tile:nth-child(3n+2) {background:var(--dm-tile2)}
+#dm-wireframes .dm-tile:nth-child(3n) {background:var(--dm-tile3)}
+#dm-wireframes .dm-tile[aria-pressed="true"] {background:var(--dm-selected);border:2px solid var(--dm-accent);color:var(--dm-accent)}
+#dm-wireframes .dm-tile-name {width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;flex-shrink:0}
+#dm-wireframes .dm-tile small {font-size:11px}
+#dm-wireframes .dm-tile-size {font-size:19px;letter-spacing:-.02em}
+#dm-wireframes .dm-map-meta {display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin:8px 0 17px;color:var(--dm-muted);font-size:11px}
+#dm-wireframes .dm-overview {display:flex;gap:2px;height:25px;margin:6px 0 15px}
+#dm-wireframes .dm-overview button {min-width:0;border-radius:2px;padding:0;background:var(--dm-tile)}
+#dm-wireframes .dm-overview button[aria-pressed="true"] {background:var(--dm-selected)}
+#dm-wireframes .dm-table {width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;color:var(--dm-ink)}
+#dm-wireframes .dm-table th {font-size:11px;font-weight:400;color:var(--dm-muted);text-align:left;padding:8px 5px;border-bottom:1px solid var(--dm-line)}
+#dm-wireframes .dm-table td {padding:9px 5px;border-bottom:1px solid var(--dm-line);vertical-align:middle}
+#dm-wireframes .dm-table th:nth-child(2),#dm-wireframes .dm-table td:nth-child(2) {width:68px;text-align:right;font-variant-numeric:tabular-nums}
+#dm-wireframes .dm-table th:nth-child(3),#dm-wireframes .dm-table td:nth-child(3) {width:75px;text-align:right}
+#dm-wireframes .dm-table tr[data-selected="true"] {background:var(--dm-selected)}
+#dm-wireframes .dm-table td button {border:0;background:transparent;padding:0;max-width:100%;text-align:left;overflow-wrap:anywhere}
+#dm-wireframes .dm-path {font-size:11px;color:var(--dm-muted);overflow-wrap:anywhere;margin-top:2px}
+#dm-wireframes .dm-bar {height:4px;background:var(--dm-soft);margin-top:4px}
+#dm-wireframes .dm-bar span {height:100%;display:block;background:var(--dm-muted)}
+#dm-wireframes .dm-inspector {border-left:1px solid var(--dm-line);padding:20px 15px;min-width:0;background:var(--dm-bg)}
+#dm-wireframes .dm-object {height:43px;width:43px;border:1px solid var(--dm-line);background:var(--dm-soft);display:grid;place-items:center;border-radius:8px;margin:17px 0 12px;color:var(--dm-muted)}
+#dm-wireframes .dm-inspector h3 {overflow-wrap:anywhere}
+#dm-wireframes .dm-size {font-size:28px;font-weight:500;letter-spacing:-.04em;margin:20px 0 0}
+#dm-wireframes .dm-inspector dl {margin:18px 0;display:grid;grid-template-columns:1fr auto;gap:9px;font-size:11px}
+#dm-wireframes .dm-inspector dt {color:var(--dm-muted)}
+#dm-wireframes .dm-inspector dd {margin:0;text-align:right}
+#dm-wireframes .dm-inspector button {display:block;width:100%;margin-top:8px;text-align:center}
+#dm-wireframes .dm-inspector .dm-primary,#dm-wireframes .dm-primary {background:var(--dm-ink);border-color:var(--dm-ink);color:var(--dm-bg)}
+#dm-wireframes .dm-note {font-size:11px;color:var(--dm-muted);margin-top:14px;line-height:1.6}
+#dm-wireframes .dm-footer {padding:8px 14px;border-top:1px solid var(--dm-line);background:var(--dm-soft);font-size:11px;color:var(--dm-muted);display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+#dm-wireframes .dm-alert {padding:10px 12px;border:1px dashed var(--dm-muted);background:var(--dm-soft);border-radius:5px;margin-bottom:14px;font-size:12px}
+#dm-wireframes .dm-alert button {margin-top:8px}
+#dm-wireframes .dm-filters {display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:13px}
+#dm-wireframes .dm-empty {padding:75px 18px;text-align:center}
+#dm-wireframes .dm-empty p {margin:8px auto 20px;max-width:320px;color:var(--dm-muted)}
+#dm-wireframes .dm-empty button {display:block;margin:10px auto;min-width:180px}
+#dm-wireframes .dm-inline-detail {padding:12px;background:var(--dm-soft);border-radius:4px;margin-top:10px}
+#dm-wireframes [hidden] {display:none!important}
+#dm-wireframes .dm-match-nav {display:flex;gap:4px;align-items:center;font-size:11px}
+#dm-wireframes .dm-match-nav button {padding:5px 8px}
+#dm-wireframes[data-inspector="false"] .dm-workspace {grid-template-columns:165px minmax(0,1fr)}
+#dm-wireframes[data-inspector="false"] .dm-inspector {display:none}
+#dm-wireframes[data-overview="false"] .dm-overview-wrap {display:none}
+@media(max-width:850px) {#dm-wireframes .dm-workspace {grid-template-columns:145px minmax(0,1fr)} #dm-wireframes .dm-inspector {grid-column:1/-1;border-left:0;border-top:1px solid var(--dm-line)} #dm-wireframes .dm-inspector dl {max-width:400px} #dm-wireframes .dm-inspector button {width:auto;display:inline-block;margin-right:6px} #dm-wireframes .dm-object {display:none} #dm-wireframes .dm-size {margin-top:8px} }
+@media(max-width:540px) {#dm-wireframes .dm-workspace,#dm-wireframes[data-inspector="false"] .dm-workspace {display:block} #dm-wireframes .dm-sidebar {display:grid;grid-template-columns:1fr 1fr;border-right:0;border-bottom:1px solid var(--dm-line);padding:8px} #dm-wireframes .dm-folder-nav,#dm-wireframes .dm-side-volume,#dm-wireframes .dm-sidebar .dm-kicker {display:none} #dm-wireframes .dm-main {padding:12px} #dm-wireframes .dm-titlebar {gap:9px;padding:10px} #dm-wireframes .dm-subtitle {display:none} #dm-wireframes .dm-titlebar button {font-size:11px} #dm-wireframes .dm-heading {flex-wrap:wrap} #dm-wireframes .dm-tile {padding:5px} #dm-wireframes .dm-tile-size {font-size:15px} #dm-wireframes .dm-map {height:300px} #dm-wireframes .dm-toolbar select {max-width:100%} }
+@media(pointer:coarse) {#dm-wireframes button {min-height:44px} #dm-wireframes input,#dm-wireframes select {font-size:16px} #dm-wireframes .dm-overview {height:44px} }
+</style>
+<div id="dm-wireframes" aria-label="Disk Map UI wireframes">
+  <nav class="dm-scenes" aria-label="Wireframe screens">
+    <span class="dm-kicker">Wireframes</span>
+    <button data-scene="map" aria-pressed="true">01 · Explore</button>
+    <button data-scene="bundles" aria-pressed="false">02 · Large bundles</button>
+    <button data-scene="package" aria-pressed="false">03 · Inside a package</button>
+    <button data-scene="scan" aria-pressed="false">04 · Scanning</button>
+    <button data-scene="access" aria-pressed="false">05 · Partial access</button>
+    <button data-scene="welcome" aria-pressed="false">06 · Choose location</button>
+  </nav>
+  <section class="dm-window" aria-label="Disk Map application">
+    <header class="dm-titlebar"><div class="dm-lights" aria-hidden="true"><span></span><span></span><span></span></div><div class="dm-title">Disk Map <span class="dm-subtitle">Macintosh HD</span></div><button data-action="welcome">Choose Location…</button></header>
+    <div class="dm-toolbar">
+      <button data-action="back" aria-label="Go back">‹</button><button data-action="root" aria-label="Go to scan root">Home</button>
+      <input class="dm-search" type="search" placeholder="Search files and folders" aria-label="Search sample files and folders">
+      <div class="dm-match-nav" hidden><span id="dm-match-count"></span><button data-action="prev-match" aria-label="Previous search match">↑</button><button data-action="next-match" aria-label="Next search match">↓</button></div>
+      <select id="dm-metric" aria-label="Size metric"><option value="allocated">Size on disk</option><option value="logical">Logical size</option></select>
+      <button data-action="rescan">Rescan</button>
+    </div>
+    <div class="dm-workspace">
+      <aside class="dm-sidebar" aria-label="Locations and views">
+        <div class="dm-kicker">Location</div><button data-action="root" id="dm-home-nav">⌂ &nbsp; Alex’s Home <small>384 GB</small></button>
+        <div class="dm-kicker">Explore</div><button data-action="map" id="dm-map-nav">Treemap</button><button data-action="bundles" id="dm-bundle-nav">Bundles & Packages</button>
+        <div class="dm-folder-nav"><div class="dm-kicker">Folders · by size</div><div id="dm-folder-list"></div></div>
+        <div class="dm-side-volume">Macintosh HD<div class="dm-meter"><span style="width:72%"></span></div>720 GB used · 280 GB available<br>1 TB capacity</div>
+      </aside>
+      <main class="dm-main" id="dm-main"></main>
+      <aside class="dm-inspector" id="dm-inspector" aria-label="Selected item inspector"></aside>
+    </div>
+    <footer class="dm-footer"><span id="dm-status" aria-live="polite"></span><span>Sample data · Read-only wireframe</span></footer>
+  </section>
+</div>
+<script>
+(() => {
+const root = document.getElementById('dm-wireframes');
+const main = root.querySelector('#dm-main');
+const inspector = root.querySelector('#dm-inspector');
+const search = root.querySelector('.dm-search');
+const make = (id,name,size,kind,children=[]) => ({id,name,size,kind,children});
+const home = make('home','Alex’s Home',384,'folder',[
+  make('photos','Photos Library.photoslibrary',142,'package',[
+    make('originals','Originals',108,'folder',[make('photos2025','2025',68,'folder'),make('photos2024','2024',40,'folder')]),
+    make('resources','Resources',24,'folder'),make('database','Database',6,'folder'),make('previews','Previews',4,'folder')]),
+  make('movies','Movies',88,'folder',[make('film','Summer film.mov',52,'file'),make('footage','Camera footage',36,'folder')]),
+  make('library','Library',64,'folder',[make('backup','iPhone backup',38,'folder'),make('caches','Caches',18,'folder'),make('support','Application Support',8,'folder')]),
+  make('developer','Developer',42,'folder',[make('xcode','Xcode.app',24,'package',[make('platforms','Platforms',17,'folder'),make('frameworks','Frameworks',5,'folder'),make('tools','Tools',2,'folder')]),make('simulator','Development.vm',18,'package',[make('disk','Virtual disk.img',17,'file'),make('vmconfig','Configuration',1,'folder')])]),
+  make('downloads','Downloads',32,'folder',[make('installer','Studio Installer.app',14,'package',[make('payload','Payload',13,'folder'),make('installresources','Resources',1,'folder')]),make('archive','Project archive.zip',12,'file'),make('otherdownloads','Other downloads',6,'folder')]),
+  make('documents','Documents',16,'folder',[make('design','Brand assets',10,'folder'),make('papers','Documents & PDFs',6,'folder')])
+]);
+const nodes = new Map();
+function index(node,parent,path) {node.parent=parent;node.path=path+'/'+node.name;nodes.set(node.id,node);node.children.forEach(n=>index(n,node,node.path));}
+index(home,null,'/Users');home.path='/Users/alex';
+function repath(node) {node.children.forEach(n=>{n.path=node.path+'/'+n.name;repath(n)});}repath(home);
+let current=home, selected=nodes.get('photos'), scene='map', query='', threshold=0, matchIndex=0, history=[], canceled=false;
+const prefs={inspector:true,overview:true};
+const metric=()=>root.querySelector('#dm-metric').value;
+const size=n=>n.size*(metric()==='logical'?1.08:1);
+const fmt=n=>(Math.round(n*10)/10).toLocaleString('en-US')+' GB';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const type=n=>n.kind==='package'?'Package':n.kind==='folder'?'Folder':'File';
+const matches=()=>[...nodes.values()].filter(n=>n!==home&&(n.name+' '+n.path).toLowerCase().includes(query.toLowerCase()));
+const stateLabel=()=>scene==='scan'?(canceled?'Canceled · Partial results':'Scanning · Partial results'):scene==='access'?'Partial · 3 locations skipped':'Scan complete';
+function breadcrumb() {let a=[],n=current;while(n){a.unshift(n);n=n.parent;}return '<div class="dm-breadcrumb">'+a.map(n=>`<button data-open="${n.id}">${esc(n.name)}</button>`).join('<span>›</span>')+'</div>';}
+function partitions(items,x,y,w,h,out=[]) {
+ if(items.length===1){out.push({n:items[0],x,y,w,h});return out;}
+ if(!items.length)return out;
+ const total=items.reduce((s,n)=>s+size(n),0);let split=1,sum=size(items[0]);
+ while(split<items.length-1 && sum+size(items[split])<total/2){sum+=size(items[split++]);}
+ const f=sum/total;
+ if(w>=h){partitions(items.slice(0,split),x,y,w*f,h,out);partitions(items.slice(split),x+w*f,y,w*(1-f),h,out);}
+ else {partitions(items.slice(0,split),x,y,w,h*f,out);partitions(items.slice(split),x,y+h*f,w,h*(1-f),out);}
+ return out;
+}
+function mapMarkup(items) {
+ return '<div class="dm-map" role="group" aria-label="Treemap of '+esc(current.name)+'">'+partitions(items,0,0,100,100).map(({n,x,y,w,h})=>`<button class="dm-tile" data-select="${n.id}" data-tile="${n.id}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" aria-pressed="${selected===n}" aria-label="${esc(n.name)}, ${fmt(size(n))}, ${type(n)}" title="${esc(n.path)} · ${fmt(size(n))}"><span class="dm-tile-name">${esc(n.name)}</span>${h>20?`<span class="dm-tile-size">${fmt(size(n))}</span>`:''}${h>32?`<small>${n.kind==='package'?'Package · contents grouped':type(n)}</small>`:''}</button>`).join('')+'</div>';
+}
+function table(items,denominator,paths=false) {
+return `<table class="dm-table"><thead><tr><th>Item</th><th>Size ↓</th><th>% of ${denominator===home?'scan':'folder'}</th></tr></thead><tbody>${items.map(n=>`<tr data-selected="${selected===n}"><td><button data-select="${n.id}">${esc(n.name)}</button>${paths?`<div class="dm-path">${esc(n.parent.path)}</div>`:''}</td><td>${fmt(size(n))}</td><td>${Math.round(size(n)/size(denominator)*100)}%<div class="dm-bar"><span style="width:${size(n)/size(denominator)*100}%"></span></div></td></tr>`).join('')}</tbody></table>`;
+}
+function renderInspector(){
+ if(scene==='welcome'){inspector.innerHTML='<div class="dm-kicker">Inspector</div><p class="dm-note">Select an item after scanning to see its size, path, and contents.</p>';return;}
+ const n=selected;
+ inspector.innerHTML=`<div class="dm-kicker">Selected item</div><div class="dm-object" aria-hidden="true">${n.kind==='package'?'PKG':n.kind==='folder'?'DIR':'FILE'}</div><h3>${esc(n.name)}</h3><p class="dm-muted">${type(n)}${n.kind==='package'?' · grouped contents':''}</p><div class="dm-size">${fmt(size(n))}</div><p class="dm-muted">${metric()==='logical'?'Logical size':'Reported size on disk'}</p><dl><dt>Of current ${query||scene==='bundles'||current===home?'scan':'folder'}</dt><dd>${Math.round(size(n)/size(query||scene==='bundles'?home:current)*100)}%</dd><dt>Logical size</dt><dd>${fmt(n.size*1.08)}</dd><dt>Size on disk</dt><dd>${fmt(n.size)}</dd><dt>Scan status</dt><dd>${scene==='scan'?'Partial':'Complete'}</dd></dl><div class="dm-kicker">Location</div><p class="dm-path">${esc(n.path)}</p>${n.kind==='package'?'<button class="dm-primary" data-action="inspect">Inspect Package Contents</button>':n.children.length?'<button class="dm-primary" data-action="inspect">Open Folder</button>':''}<button data-action="show-map">Show in Map</button><button data-action="finder">Reveal in Finder ↗</button><button data-action="copy">Copy Path</button><p class="dm-note">${n.kind==='package'?'Package total includes its scanned contents. Related data elsewhere is excluded.':'Sizes describe this scan and may change after files are edited.'}</p><p class="dm-note">Reported allocation is not guaranteed reclaimable space.</p>`;
+}
+function render(){
+ root.dataset.inspector=String(prefs.inspector);root.dataset.overview=String(prefs.overview);
+ root.querySelectorAll('[data-scene]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.scene===scene));
+ root.querySelector('#dm-map-nav').setAttribute('aria-pressed',scene!=='bundles'&&scene!=='welcome');
+ root.querySelector('#dm-bundle-nav').setAttribute('aria-pressed',scene==='bundles');
+ root.querySelector('[data-action="back"]').disabled=!history.length;
+ root.querySelector('#dm-folder-list').innerHTML=home.children.map(n=>`<button data-open="${n.id}" aria-pressed="${current===n}"><span>${n.kind==='package'?'◇':'›'} ${esc(n.id==='photos'?'Photos Library':n.name)}</span><small>${fmt(size(n))}</small></button>`).join('');
+ root.querySelector('#dm-home-nav small').textContent=fmt(size(home));
+ root.querySelector('#dm-status').textContent=scene==='welcome'?'Ready to scan':`${stateLabel()} · ${fmt(size(home))} measured · Alex’s Home`;
+ const found=query?matches():[];
+ root.querySelector('.dm-match-nav').hidden=!query;
+ root.querySelector('#dm-match-count').textContent=found.length?`${matchIndex+1} / ${found.length}`:'0 matches';
+ if(scene==='welcome') {
+ main.innerHTML='<div class="dm-empty"><div class="dm-kicker">Start with a location</div><h2 style="margin-top:14px">Find what’s taking up space.</h2><p>Choose a folder or volume to explore its files and packages.</p><button class="dm-primary" data-action="sample-scan">Scan Alex’s Home</button><button data-action="sample-scan">Choose a Folder…</button><p class="dm-note">Wireframe preview uses sample files.<br>No files on your Mac are scanned.</p></div>';
+ } else if(query) {
+ main.innerHTML=breadcrumb()+`<div class="dm-heading"><div><h2>Search results</h2><p class="dm-muted">${found.length} matches in Alex’s Home</p></div><button data-action="clear-search">Clear</button></div>`+(found.length?table(found,home,true):'<div class="dm-empty"><h3>No matching files</h3><p>Try a different name or path in this sample scan.</p></div>');
+ } else if(scene==='bundles') {
+ const bundles=[...nodes.values()].filter(n=>n.kind==='package'&&size(n)>=threshold).sort((a,b)=>size(b)-size(a));
+ main.innerHTML=`<div class="dm-breadcrumb">Alex’s Home › Bundles & Packages</div><div class="dm-heading"><div><h2>Large bundles</h2><p class="dm-muted">Whole packages, ranked by size.</p></div><span class="dm-tag">${bundles.length} packages</span></div><div class="dm-filters"><label for="dm-min">Minimum size</label><select id="dm-min"><option value="0">Any size</option><option value="10">10 GB</option><option value="20">20 GB</option><option value="100">100 GB</option></select><span class="dm-muted">Scope: scan root</span></div>`+table(bundles,home,true)+'<p class="dm-note">Package contents are grouped. Select a package to inspect what’s inside.</p>';
+ main.querySelector('#dm-min').value=threshold;
+ } else {
+ const items=current.children.length?current.children:[current];
+ let notice='';
+ if(scene==='scan')notice=`<div class="dm-alert"><strong>${canceled?'Scan canceled':'Scanning Library…'}</strong><p>${canceled?'Results collected so far remain available.':'38,204 items discovered · 00:18 elapsed'}</p><div class="dm-meter"><span style="width:58%"></span></div><span class="dm-muted">${canceled?'Rescan to update these results.':'Sizes are still changing. Completion percentage is unknown.'}</span><br><button data-action="${canceled?'finish-scan':'cancel'}">${canceled?'Resume sample scan':'Cancel scan'}</button>${canceled?'':' <button data-action="finish-scan">Preview completed scan</button>'}</div>`;
+ if(scene==='access')notice='<div class="dm-alert"><strong>Some locations couldn’t be scanned</strong><p>3 protected folders skipped. Their sizes are unknown.</p><button data-action="access-details">Review skipped locations</button><div id="dm-access-details" hidden class="dm-inline-detail">~/Library/Mail<br>~/Library/Messages<br>~/Library/Safari<p class="dm-note">Access denied. You can grant Full Disk Access in System Settings → Privacy & Security, then rescan. Other permissions may still apply.</p></div></div>';
+ if(current.kind==='package')notice+='<div class="dm-alert">Inside a package · Read-only inspection<button data-action="leave-package" style="display:block">Return to package</button></div>';
+ main.innerHTML=breadcrumb()+`<div class="dm-heading"><div><h2>${esc(current.name)}</h2><p class="dm-muted">${fmt(size(current))} measured · ${items.length} items in this view</p></div><span class="dm-tag">${current.kind==='package'?'Package contents':'Treemap'}</span></div>`+notice+mapMarkup(items)+`<div class="dm-map-meta"><span>Area = ${metric()==='logical'?'logical size':'reported size on disk'}</span><span>◇ Packages grouped</span></div><div class="dm-overview-wrap"><div class="dm-kicker">Scan overview · Alex’s Home</div><div class="dm-overview" aria-label="Scan overview">${home.children.map(n=>{let ancestor=current;while(ancestor.parent&&ancestor.parent!==home)ancestor=ancestor.parent;return `<button data-open="${n.id}" style="flex:${n.size}" aria-label="${esc(n.name)} overview" title="${esc(n.name)}" aria-pressed="${ancestor===n}"></button>`}).join('')}</div></div>`+table(items,current);
+ }
+ renderInspector();
+}
+function navigate(node){history.push({current,selected,scene,query});current=node;selected=node.children[0]||node;query='';search.value='';scene=node.kind==='package'?'package':'map';render();}
+function chooseScene(next){scene=next;query='';search.value='';current=home;selected=nodes.get('photos');history=[];canceled=false;if(next==='package'){current=nodes.get('photos');selected=nodes.get('originals');history.push({current:home,selected:current,scene:'map',query:''});}render();}
+function showMap(){let n=selected;let p=n.parent;while(p&&p!==home){if(p.kind==='package'){n=p;break;}p=p.parent;}navigate(n.parent||home);selected=n;render();}
+function notify(message){root.querySelector('#dm-status').textContent=message;}
+root.addEventListener('click',event=>{
+ const b=event.target.closest('button');if(!b)return;
+ if(b.dataset.scene){chooseScene(b.dataset.scene);return;}
+ if(b.dataset.select){selected=nodes.get(b.dataset.select);root.querySelectorAll('[data-select]').forEach(el=>{if(el.hasAttribute('aria-pressed'))el.setAttribute('aria-pressed',el.dataset.select===selected.id);const row=el.closest('tr');if(row)row.dataset.selected=String(el.dataset.select===selected.id);});renderInspector();return;}
+ if(b.dataset.open){const n=nodes.get(b.dataset.open);if(n.kind==='package'){selected=n;render();}else navigate(n);return;}
+ switch(b.dataset.action){
+ case 'welcome':chooseScene('welcome');break;
+ case 'map':case 'root':chooseScene('map');break;
+ case 'bundles':chooseScene('bundles');break;
+ case 'back':{const old=history.pop();if(old){({current,selected,scene,query}=old);search.value=query;render();}break;}
+ case 'inspect':navigate(selected);break;
+ case 'show-map':showMap();break;
+ case 'leave-package':{const pkg=current; navigate(current.parent||home);selected=pkg;render();break;}
+ case 'finder':notify('Preview: Finder would reveal '+selected.path);break;
+ case 'copy':if(navigator.clipboard)navigator.clipboard.writeText(selected.path).then(()=>notify('Copied '+selected.path)).catch(()=>notify('Path: '+selected.path));else notify('Path: '+selected.path);break;
+ case 'rescan':case 'sample-scan':chooseScene('scan');break;
+ case 'cancel':canceled=true;render();break;
+ case 'finish-scan':chooseScene('map');break;
+ case 'access-details':{const el=main.querySelector('#dm-access-details');el.hidden=!el.hidden;break;}
+ case 'clear-search':query='';search.value='';render();break;
+ case 'prev-match':case 'next-match':{const list=matches();if(list.length){matchIndex=(matchIndex+(b.dataset.action==='next-match'?1:-1)+list.length)%list.length;selected=list[matchIndex];render();}break;}
+ }
+});
+root.addEventListener('dblclick',event=>{const tile=event.target.closest('[data-tile]');if(tile){const n=nodes.get(tile.dataset.tile);if(n.kind==='folder'&&n.children.length)navigate(n);else{selected=n;renderInspector();}}});
+root.addEventListener('change',event=>{if(event.target.id==='dm-min'){threshold=Number(event.target.value);render();}if(event.target.id==='dm-metric')render();});
+search.addEventListener('input',()=>{query=search.value.trim();matchIndex=0;if(query){const list=matches();if(list.length)selected=list[0];}render();});
+render();
+if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:render});tweak.addToggle(prefs,'inspector',{label:'Show inspector'});tweak.addToggle(prefs,'overview',{label:'Show scan overview'});}
+})();
+</script>

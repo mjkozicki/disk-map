@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Disk Map is a native macOS disk explorer in development. Explore the interactive treemap prototype, find large bundles, and review the roadmap.">
+  <meta name="theme-color" content="#172d50">
+  <meta property="og:title" content="Disk Map — A clearer view of your Mac’s files">
+  <meta property="og:description" content="Explore the interactive prototype of a macOS disk explorer focused on treemaps and large bundles.">
+  <meta property="og:type" content="website">
+  <title>Disk Map — macOS disk explorer</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#preview">Skip to interactive preview</a>
+  <div class="page">
+    <header class="site-header">
+      <a class="brand" href="./"><img src="favicon.svg" width="32" height="32" alt="">Disk Map</a>
+      <nav aria-label="Project navigation">
+        <a href="https://github.com/mjkozicki/disk-map/blob/main/features.md">Features</a>
+        <a href="https://github.com/mjkozicki/disk-map/blob/main/phases.md">Roadmap</a>
+        <a href="https://github.com/mjkozicki/disk-map">GitHub ↗</a>
+      </nav>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div><p class="eyebrow">macOS · In development</p><h1 id="page-title">See where your space goes.</h1><p>Explore a treemap of your files. Find large bundles and look inside them.</p></div>
+        <div class="prototype-note"><span>Interactive prototype</span><p>Sample files only. The native app is planned; no download is available yet.</p></div>
+      </section>
+      <section id="preview" aria-label="Interactive Disk Map prototype">
+        <!-- DISK_MAP_WIREFRAME -->
+        <noscript><p class="no-script">Enable JavaScript to explore the sample files, or read the <a href="https://github.com/mjkozicki/disk-map/blob/main/features.md">feature plan</a>.</p></noscript>
+      </section>
+      <section class="project-notes" aria-label="About the project">
+        <article><h2>A map you can explore</h2><p>Select a tile to see its details, open folders, and use the overview to keep your place. The area of each tile represents its size.</p></article>
+        <article><h2>Bundles, with context</h2><p>Rank applications and libraries as whole packages, then inspect their contents. Large doesn’t automatically mean safe to delete.</p></article>
+        <article><h2>Built for a local workflow</h2><p>The planned app scans on your Mac. This preview uses fictional data and never reads your disk. Finder and scanning actions are simulated.</p></article>
+      </section>
+    </main>
+    <footer class="site-footer"><span>Disk Map · macOS disk explorer</span><span>Inspired by <a href="http://www.diskview.com/screenshots.htm">DiskView</a> and <a href="https://learn.microsoft.com/en-us/sysinternals/downloads/diskview">Sysinternals DiskView</a>.</span></footer>
+  </div>
+</body>
+</html>
