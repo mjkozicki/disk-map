@@ -1,0 +1,32 @@
+name: Build macOS app
+
+on:
+  push:
+    branches: [main]
+    paths: ['Package.swift', 'Sources/**', 'Resources/**', 'scripts/build-app.sh', 'scripts/make-icon.swift', '.github/workflows/native.yml']
+  pull_request:
+    branches: [main]
+    paths: ['Package.swift', 'Sources/**', 'Resources/**', 'scripts/build-app.sh', 'scripts/make-icon.swift', '.github/workflows/native.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build
+        run: swift build
+      - name: Validate scanner and treemap
+        run: swift run --skip-build disk-map-check
+      - name: Package local development app
+        run: bash scripts/build-app.sh
+      - name: Archive app preserving bundle permissions
+        run: ditto -c -k --sequesterRsrc --keepParent "build/Disk Map.app" build/DiskMap-macOS.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DiskMap-macOS-development
+          path: build/DiskMap-macOS.zip
+          retention-days: 14

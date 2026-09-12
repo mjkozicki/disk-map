@@ -4,7 +4,7 @@
 
 Implement the native macOS explorer described in [features.md](features.md). The MVP is complete after Phase 5: select a location, scan it, explore a treemap, find large packages, inspect them, and reveal them in Finder.
 
-All phases below are planned; no application implementation exists yet. Follow the dependencies in order. Later enhancements are optional and do not block the MVP.
+The initial native implementation now exists in `Sources/`, with a local app bundle produced by `scripts/build-app.sh`. Phases 0–3 have implementations and initial validation; Phase 4 has core correctness checks and a 100,000-file scanner measurement. Phase 5 has local ad-hoc app signing, but notarization, cross-version testing, and full release qualification remain outstanding. Phases 6–7 remain future work. See [native validation](docs/validation.md) for measured results and limits.
 
 ## Phase 0 — Establish the app and filesystem contract
 
