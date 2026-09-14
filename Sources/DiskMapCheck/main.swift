@@ -106,6 +106,89 @@ func verifyCore() throws {
     print("PASS: treemap proportionality, containment, non-overlap, determinism, empty/invalid input")
 }
 
+func verifyCleanup() throws {
+    let fm = FileManager.default
+    let root = fm.temporaryDirectory.appendingPathComponent("disk-map-cleanup-\(UUID().uuidString)").resolvingSymlinksInPath()
+    try fm.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? fm.removeItem(at: root) }
+    func dir(_ path: String) throws { try fm.createDirectory(at: root.appendingPathComponent(path), withIntermediateDirectories: true) }
+    func file(_ path: String) throws { try Data("fixture".utf8).write(to: root.appendingPathComponent(path)) }
+    try dir("web/node_modules/dependency/node_modules/nested")
+    try file("web/node_modules/local-edit.txt")
+    try file("web/package.json")
+    for path in ["web/dist", "web/build", "web/.next", "web/.nuxt", "web/.svelte-kit", "web/.parcel-cache", "web/.turbo", "python/__pycache__", "python/.pytest_cache", "python/.mypy_cache", "python/.ruff_cache", "python/.venv", "rust/target", "swift/.build", "unrelated/build", "unrelated/dist", "unrelated/target", "unrelated/.next", "unrelated/.nuxt", "unrelated/.svelte-kit", "unrelated/.parcel-cache", "unrelated/venv", "Sample.app/Contents/node_modules", ".git/node_modules", ".Trash/node_modules"] { try dir(path) }
+    try file("python/.venv/pyvenv.cfg")
+    try file("rust/Cargo.toml")
+    try file("swift/Package.swift")
+    for path in ["dotnet/bin", "dotnet/obj", "java/target", "gradle/build", "gradle/.gradle", "unrelated/bin", "unrelated/obj", "unrelated/.gradle"] { try dir(path) }
+    try file("dotnet/Example.csproj")
+    try file("java/pom.xml")
+    try file("gradle/build.gradle.kts")
+    try dir("linked")
+    try fm.createSymbolicLink(at: root.appendingPathComponent("linked/node_modules"), withDestinationURL: root.appendingPathComponent("web/node_modules"))
+    let (index, _) = scan(root)
+    let candidates = DevelopmentCleanup.candidates(in: index)
+    let paths = Set(candidates.map { $0.url.path.replacingOccurrences(of: root.path + "/", with: "") })
+    try require(paths == Set(["web/node_modules", "web/dist", "web/build", "web/.next", "web/.nuxt", "web/.svelte-kit", "web/.parcel-cache", "web/.turbo", "python/__pycache__", "python/.pytest_cache", "python/.mypy_cache", "python/.ruff_cache", "python/.venv", "rust/target", "swift/.build", "dotnet/bin", "dotnet/obj", "java/target", "gradle/build", "gradle/.gradle"]), "Cleanup classification or exclusion failed: \(paths)")
+    let target = candidates.first { $0.url.lastPathComponent == "node_modules" }!
+    try DevelopmentCleanup.validate(target, in: index)
+    for path in ["web/node_modules", "web/node_modules/dependency", "Sample.app/Contents", ".git"] {
+        let (nested, _) = scan(root.appendingPathComponent(path))
+        try require(DevelopmentCleanup.candidates(in: nested).isEmpty, "Cleanup must exclude generated roots and package interiors")
+    }
+    var partial = index
+    partial.apply(ScanBatch(events: [.problem(target.id, "Fixture unreadable directory")], currentPath: ""))
+    try require(!DevelopmentCleanup.candidates(in: partial).contains { $0.id == target.id }, "Partial candidate must be excluded")
+    print("PASS: cleanup classification, project evidence, nested deduplication, packages, symlinks, partial folders")
+
+    // A replaced target and a redirected ancestor must both be rejected before the mover is called.
+    let original = root.appendingPathComponent("saved-dependencies")
+    try fm.moveItem(at: target.url, to: original)
+    try dir("web/node_modules")
+    var moveCount = 0
+    let replaced = DevelopmentCleanup.moveToTrash(ids: [target.id], in: index) { _ in moveCount += 1 }
+    try require(replaced.failures.count == 1 && moveCount == 0, "Changed target reached the mover")
+    try fm.removeItem(at: target.url)
+    try fm.moveItem(at: original, to: target.url)
+    let web = root.appendingPathComponent("web"), saved = root.appendingPathComponent("saved-web")
+    try fm.moveItem(at: web, to: saved)
+    try fm.createSymbolicLink(at: web, withDestinationURL: saved)
+    let redirected = DevelopmentCleanup.moveToTrash(ids: [target.id], in: index) { _ in moveCount += 1 }
+    try require(redirected.failures.count == 1 && moveCount == 0, "Symlink ancestor reached the mover")
+    try fm.removeItem(at: web)
+    try fm.moveItem(at: saved, to: web)
+    let nestedID = index.nodes.first { $0.name == "nested" }!.id
+    let rejected = DevelopmentCleanup.moveToTrash(ids: [0, nestedID], in: index) { _ in moveCount += 1 }
+    try require(rejected.failures.count == 2 && moveCount == 0, "Root or nested selection reached the mover")
+    print("PASS: cleanup rejects replaced targets, redirected ancestors, root and nested selections")
+
+    let other = candidates.first { $0.url == root.appendingPathComponent("rust/target") }!
+    let simulated = DevelopmentCleanup.moveToTrash(ids: [target.id, other.id], in: index) { url in
+        if url == target.url { throw CocoaError(.fileWriteNoPermission) }
+        try fm.moveItem(at: url, to: root.appendingPathComponent("simulated-trash"))
+    }
+    try require(simulated.failures.count == 1 && simulated.moved == [other.url], "One failure must not stop other selected folders")
+    try require(fm.fileExists(atPath: target.url.appendingPathComponent("local-edit.txt").path), "Failed move altered original contents")
+    let unavailable = DevelopmentCleanup.moveToTrash(ids: [target.id], in: index) { _ in throw CocoaError(.featureUnsupported) }
+    try require(unavailable.failures.count == 1 && fm.fileExists(atPath: target.url.path), "Unavailable Trash must not fall back to deleting")
+    print("PASS: cleanup reports individual failures, continues other moves, never falls back to deletion")
+
+    // Exercise the native Trash API only on the fixture; restore it immediately for teardown.
+    var trashedURL: NSURL?
+    let actual = DevelopmentCleanup.moveToTrash(ids: [target.id], in: index) { url in
+        try fm.trashItem(at: url, resultingItemURL: &trashedURL)
+    }
+    guard let trashedURL else { throw CheckFailure("Native Trash fixture failed: \(actual.failures.map(\.message))") }
+    let trashPath = trashedURL as URL
+    defer { try? fm.removeItem(at: trashPath) }
+    try require(actual.moved == [target.url] && !fm.fileExists(atPath: target.url.path), "Native Trash did not move the selected fixture")
+    try require(fm.fileExists(atPath: trashPath.appendingPathComponent("local-edit.txt").path), "Trash lost fixture contents")
+    try fm.moveItem(at: trashPath, to: target.url)
+    let (refreshed, _) = scan(root)
+    try require(!DevelopmentCleanup.candidates(in: refreshed).contains { $0.url == other.url }, "Rescan retained moved folder")
+    print("PASS: native Trash move, recoverable contents, restore, refreshed cleanup results")
+}
+
 do {
     let args = CommandLine.arguments
     if args.count == 3 && args[1] == "--scan" {
@@ -115,6 +198,7 @@ do {
         print("Logical: \(root.logicalBytes) bytes; allocated: \(root.allocatedBytes) bytes; unknown allocation: \(root.unknownAllocated); issues: \(root.issueCount)")
     } else {
         try verifyCore()
+        try verifyCleanup()
         print("All core checks passed.")
     }
 } catch {

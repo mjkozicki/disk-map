@@ -45,7 +45,7 @@ struct DiskMapApp: App {
             }
             CommandGroup(replacing: .help) {
                 Button("Disk Map Help") {
-                    model.message = "Choose a folder or volume, or drop a folder into the window. Select tiles or table rows for details. Double-click folders to explore them; packages require Inspect Package Contents. Size on disk uses reported allocation, and + marks incomplete totals. Use Bundles & Packages to find large applications and libraries. Nothing is deleted or modified."
+                    model.message = "Choose a folder or volume, or drop a folder into the window. Select tiles or table rows for details. Double-click folders to explore them; packages require Inspect Package Contents. Size on disk uses reported allocation, and + marks incomplete totals. Use Bundles & Packages to find large applications and libraries. Use Development Cleanup to review generated folders and move selected items to Trash. Space is freed only after you empty Trash in Finder."
                 }
             }
         }

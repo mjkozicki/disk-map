@@ -14,12 +14,15 @@ struct ContentView: View {
         } detail: {
             HSplitView {
                 Group {
-                    if model.hasScan { ExplorerView(model: model) }
+                    if model.hasScan {
+                        if model.mode == .cleanup { DevelopmentCleanupView(model: model) }
+                        else { ExplorerView(model: model) }
+                    }
                     else if model.isScanning {
                         VStack(spacing: 16) { ProgressView(); Text("Reading folder metadata…"); Button("Cancel") { model.cancelScan() } }.frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else { WelcomeView(model: model) }
                 }.frame(minWidth: 480, maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                if model.showInspector && model.hasScan {
+                if model.showInspector && model.hasScan && model.mode != .cleanup {
                     InspectorView(model: model).frame(minWidth: 220, idealWidth: 255, maxWidth: 330)
                 }
             }
@@ -59,6 +62,7 @@ struct ContentView: View {
             Button("OK", role: .cancel) { model.message = nil }
         } message: { Text(model.message ?? "") }
         .sheet(isPresented: $model.showIssues) { IssuesView(model: model) }
+        .sheet(isPresented: $model.showCleanupReview) { CleanupReviewView(model: model) }
     }
 }
 
@@ -386,7 +390,7 @@ struct StatusBar: View {
             Spacer(minLength: 5)
             if model.isScanning { Text(model.currentPath).lineLimit(1).truncationMode(.middle).frame(maxWidth: 330).help(model.currentPath) }
             else if let finished = model.finishedAt { Text(finished, style: .time) }
-            Text("Read-only").foregroundStyle(.secondary)
+            Text("Local scan").foregroundStyle(.secondary)
         }.font(.caption).padding(.horizontal, 14).padding(.vertical, 8).background(.bar)
     }
 }

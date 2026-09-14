@@ -22,7 +22,7 @@ Adapt its direct exploration into **Show in Map**, persistent selection, next/pr
 
 - Proposed baseline: macOS 14 or later, Swift and SwiftUI, with AppKit for Finder integration and custom drawing where needed. Confirm the deployment target during Phase 0.
 - Scan local folders and mounted local volumes. All analysis happens on the Mac; no account, cloud service, or file uploads.
-- First release is a read-only explorer. Users can reveal items in Finder to manage them.
+- Scanning is read-only. Development Cleanup offers reviewed Move to Trash for recognized generated development folders; other items can be revealed in Finder.
 - Treat a macOS bundle/package as one meaningful item by default, while still scanning its accessible contents to calculate its size.
 - A large item is an inspection candidate, never automatically classified as safe to remove.
 

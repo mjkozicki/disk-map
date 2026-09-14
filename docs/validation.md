@@ -34,3 +34,13 @@ A temporary fixture contained 100,000 empty files across 100 subdirectories. The
 - Local ad-hoc signing is complete. Developer ID signing and Apple notarization require the owner's release credentials and are not complete.
 
 These are development-build results, not a claim that all production-release gates in `phases.md` have passed.
+
+## Development cleanup — September 13, 2026
+
+- Core checks cover JavaScript dependencies and framework caches, Python caches/environments, Swift, Rust, .NET, Maven, and Gradle output, plus unrelated folders whose names must not be enough to qualify.
+- Disposable filesystem fixtures verify nested deduplication, package-interior roots, Git/Trash exclusions, symbolic links, partial candidates, replaced targets, redirected ancestors, and rejection of root/nested action IDs.
+- Injected permission and unsupported-Trash failures leave contents intact and allow other selected folders to proceed.
+- A real native Trash operation moved only a disposable fixture. Its contents were verified in Trash and restored immediately; rescan checks confirm moved folders disappear from candidates.
+- The filesystem check and Trash move are separate operations, so simultaneous external modifications remain a race; this is not an atomic filesystem snapshot.
+- Native UI validation covered fixture scanning, six recognized folders, individual selection, selection retained through search, exact-path review, cancellation, a successful Trash move, the per-batch report, and automatic rescan from six to five candidates. The UI move leaves its 16 KiB disposable fixture in Trash; the remaining temporary source fixture was removed.
+- Release app generation and strict ad-hoc signature verification passed.

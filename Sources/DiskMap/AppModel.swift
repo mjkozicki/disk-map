@@ -3,9 +3,9 @@ import SwiftUI
 import DiskMapCore
 
 enum ExplorerMode: String, CaseIterable, Identifiable {
-    case map = "Treemap", largest = "Largest Items", packages = "Bundles & Packages"
+    case map = "Treemap", largest = "Largest Items", packages = "Bundles & Packages", cleanup = "Development Cleanup"
     var id: String { rawValue }
-    var symbol: String { self == .map ? "rectangle.split.2x2" : self == .largest ? "chart.bar.xaxis" : "shippingbox" }
+    var symbol: String { self == .map ? "rectangle.split.2x2" : self == .largest ? "chart.bar.xaxis" : self == .cleanup ? "trash" : "shippingbox" }
 }
 enum KindFilter: String, CaseIterable, Identifiable {
     case all = "All kinds", files = "Files", folders = "Folders", packages = "Packages"
@@ -29,6 +29,13 @@ struct VolumeItem: Identifiable { var id: String { url.path }; let url: URL; let
 
 @MainActor
 final class AppModel: ObservableObject {
+    @Published var cleanupCandidates: [CleanupCandidate] = []
+    @Published var cleanupSelection: Set<Int> = []
+    @Published var cleanupReview: [CleanupCandidate] = []
+    @Published var showCleanupReview = false
+    @Published var isCleaning = false
+    @Published var isFindingCleanup = false
+    @Published var cleanupReport: CleanupResult?
     @Published var revision = 0
     @Published var dropTarget = false
     @Published var mode: ExplorerMode = .map { didSet { groupIDs = nil; refreshRows() } }
@@ -80,6 +87,7 @@ final class AppModel: ObservableObject {
         return node(id)?.bytes(metric) ?? 0
     }
     var stateLabel: String {
+        if isCleaning { return "Moving folders to Trash…" }
         if isScanning { return "Scanning" }
         if canceled { return "Canceled · partial results" }
         if !staleIDs.isEmpty { return "Results may be stale" }
@@ -109,12 +117,15 @@ final class AppModel: ObservableObject {
         if panel.runModal() == .OK, let url = panel.url { startScan(url) }
     }
     func startScan(_ requestedURL: URL) {
+        guard !isCleaning else { return }
+        cleanupCandidates = []; cleanupSelection = []; cleanupReview = []; showCleanupReview = false
+        isFindingCleanup = false
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: requestedURL.path, isDirectory: &isDirectory), isDirectory.boolValue else {
             message = "Choose an existing folder or mounted volume."; return
         }
         cancellation?.cancel()
-        let rootURL = requestedURL.standardizedFileURL
+        let rootURL = requestedURL.standardizedFileURL.resolvingSymlinksInPath()
         let token = UUID(), flag = ScanCancellation()
         generation = token; cancellation = flag
         index = ScanIndex(rootURL: rootURL)
@@ -149,7 +160,43 @@ final class AppModel: ObservableObject {
                 self.isScanning = false; self.canceled = result.canceled
                 self.elapsed = result.elapsed; self.finishedAt = Date()
                 if self.selectedID == nil { self.selectedID = self.current?.children.max { (self.node($0)?.bytes(self.metric) ?? 0) < (self.node($1)?.bytes(self.metric) ?? 0) } ?? 0 }
-                self.revision += 1; self.refreshRows()
+                self.revision += 1; self.refreshRows(); self.findCleanupCandidates()
+            }
+        }
+    }
+    var selectedCleanup: [CleanupCandidate] { cleanupCandidates.filter { cleanupSelection.contains($0.id) } }
+    var canReviewCleanup: Bool { !isScanning && !canceled && !isCleaning && !isFindingCleanup && !selectedCleanup.isEmpty }
+    func findCleanupCandidates() {
+        guard let index, !isScanning, !canceled else { return }
+        let token = generation
+        isFindingCleanup = true
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let candidates = DevelopmentCleanup.candidates(in: index)
+            DispatchQueue.main.async {
+                guard let self, self.generation == token else { return }
+                self.cleanupCandidates = candidates; self.isFindingCleanup = false
+            }
+        }
+    }
+    func reviewCleanup() {
+        guard canReviewCleanup else { return }
+        cleanupReview = selectedCleanup
+        showCleanupReview = true
+    }
+    func confirmCleanup() {
+        guard !isScanning, !canceled, !isCleaning, !cleanupReview.isEmpty, let index else { return }
+        let ids = Set(cleanupReview.map(\.id))
+        isCleaning = true
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let scoped = index.rootURL.startAccessingSecurityScopedResource()
+            let result = DevelopmentCleanup.moveToTrash(ids: ids, in: index)
+            if scoped { index.rootURL.stopAccessingSecurityScopedResource() }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.isCleaning = false; self.showCleanupReview = false
+                self.cleanupReport = result
+                self.startScan(index.rootURL)
+                self.mode = .cleanup
             }
         }
     }
@@ -204,7 +251,7 @@ final class AppModel: ObservableObject {
     }
     func refreshRows() {
         let ticket = UUID(); rowGeneration = ticket
-        guard let index, !index.nodes.isEmpty, index.contains(currentID) else { rows = []; return }
+        guard mode != .cleanup, let index, !index.nodes.isEmpty, index.contains(currentID) else { rows = []; isFiltering = false; return }
         isFiltering = true
         let scope = mode == .map || !scopeIsRoot ? currentID : 0
         let query = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()

@@ -4,7 +4,7 @@ Disk Map targets macOS 14+ using SwiftUI and AppKit, built with Swift Package Ma
 
 ## Access and distribution
 
-The initial build is a direct-distribution app without App Sandbox. The user explicitly selects a folder or volume through the open panel, Home Folder action, or drag-and-drop. The app performs read-only metadata operations using the current user's permissions. Full Disk Access is optional and is granted by the user in System Settings, never by the app. Scanning does not read file contents, launch helper processes, or request elevated privileges.
+The initial build is a direct-distribution app without App Sandbox. The user explicitly selects a folder or volume through the open panel, Home Folder action, or drag-and-drop. Scanning performs read-only metadata operations using the current user's permissions. The separate Development Cleanup flow moves explicitly reviewed generated folders to Trash. Full Disk Access is optional and is granted by the user in System Settings, never by the app. Scanning does not read file contents, launch helper processes, or request elevated privileges.
 
 `scripts/build-app.sh` creates a locally runnable app bundle with an ad-hoc signature. Set `DISKMAP_SIGN_IDENTITY` to an available Developer ID identity for a hardened-runtime signature. Public distribution still requires notarization using the owner's Apple developer credentials; local builds are not represented as notarized releases.
 
@@ -26,4 +26,10 @@ Unfinished traversal and access errors make ancestor totals partial. `+` indicat
 
 ## Current limits
 
-Initial releases do not delete files, save scan history, compare scans, watch changes, or export reports. Scanner observations are not atomic snapshots. Finder reveal rechecks device/inode identity; unrelated external edits require a rescan. Display filtering, especially searches during very large scans, can retain a copy-on-write snapshot until the filter completes. Large-scale memory and latency targets require measured validation before being claimed as release guarantees.
+The app does not permanently delete files, save scan history, compare scans, watch changes, or export reports. Scanner observations are not atomic snapshots. Finder reveal rechecks device/inode identity; unrelated external edits require a rescan. Display filtering, especially searches during very large scans, can retain a copy-on-write snapshot until the filter completes. Large-scale memory and latency targets require measured validation before being claimed as release guarantees.
+
+## Development cleanup
+
+`DevelopmentCleanup` derives non-overlapping candidates from a completed index on a background queue. Specific dependency/cache names are recognized directly; ambiguous build folders require adjacent project markers. Packages, Git internals, Trash, cloud-marked directories, known protected system paths, incomplete candidates, and the scan root are excluded. The app canonicalizes the root before scanning and checks package ancestors even when scanning a package interior directly.
+
+The UI keeps cleanup selection separate from explorer selection and freezes exact paths and sizes for review. Before each native `FileManager.trashItem` call, the core checks every scanned ancestor and target with `lstat`, rejects links or changed identities, and confirms eligibility. Failures are per item and never invoke permanent deletion. A full rescan follows every batch, including failed batches, so allocated hard-link attribution is recomputed. Reported sizes describe measured allocation, not promised space savings. Filesystem observations and the Trash operation are not atomic; stop tools modifying the projects before cleanup.
